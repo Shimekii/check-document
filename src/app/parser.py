@@ -12,6 +12,10 @@ def mrz_checksum(data):
         total += v * weights[i % 3]
     return str(total % 10)
 
+# сравнение даты выдачи документа из запроса и mrz
+def compare_doc_number(mrz_doc, req_doc):
+    return req_doc.replace(' ', '') == mrz_doc
+
 # сравнение даты из запроса и mrz
 def compare_date(mrz_data, req_data):
     data = req_data.split('.')
@@ -43,7 +47,4 @@ expiry_date_check = line2[27]
 personal_code = line2[28:42]
 personal_code_check = line2[42]
 end_check = line2[43]
-
-print(compare_date(birth_date, request['birth_date']))
-print(names)
 
