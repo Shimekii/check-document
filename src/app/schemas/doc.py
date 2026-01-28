@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 class UserRequest(BaseModel):
     birth_date: str = Field(
@@ -8,11 +8,14 @@ class UserRequest(BaseModel):
     )
     doc_number: str = Field(
         description='Номер документа',
-        examples=['0525 185673']
+        examples=['0525 185673'],
+        pattern=r"\d{4} \d{6}"
     )
     mrz: str = Field(
         description='Машиночитаемая запись',
-        examples=['PNRUSIVANOV<<IVAN<<IVANOVICH<<<<<<<<<<<<<<<<', '0521856730RUS7708220M4510220<<<<<<<<<<<<<<44']
+        examples=['PNRUSIVANOV<<IVAN<<IVANOVICH<<<<<<<<<<<<<<<<\n05251856730RUS7708220M4510220<<<<<<<<<<<<<44'],
+        min_length=89,
+        max_length=90
     )
 
 class CheckResponse(BaseModel):
@@ -49,6 +52,14 @@ class Document(BaseModel):
         examples=['0525185673'],
     )
 
+    @field_validator('doc_number')
+    @classmethod
+    def symbols_included_in_doc_number(cls, number: str) -> str:
+        for i, num in enumerate(number):
+            if not num.isdigit():
+                raise ValueError(f'В номере документа не может быть букв. Позиции с 1 по 10. Позиция: {i+1}')
+        return number
+
     doc_number_check: int = Field(
         description='Контрольное число для номера документа',
         examples=['0'],
@@ -59,10 +70,18 @@ class Document(BaseModel):
         examples=['RUS'],
     )
 
-    birth_date: int = Field(
+    birth_date: str = Field(
         description='Дата рождения формата YYMMDD',
         examples=['770822']
     )
+
+    @field_validator('birth_date')
+    @classmethod
+    def symbols_included_in_birth_date(cls, date: str):
+        for i, sym in enumerate(date):
+            if not sym.isdigit():
+                raise ValueError(f"В дате рождения не могут быть символы. Позиция с 15 по 20. Позиция: {i+15}")
+        return date
 
     birth_date_check: int = Field(
         description='Контрольное число для даты рождения',
@@ -75,20 +94,35 @@ class Document(BaseModel):
         pattern=r'[MF<]'
     )
 
-    expiry_date: int = Field(
+    expiry_date: str = Field(
         description='Дата окончания действия документа формата YYMMDD',
         examples=['451022']
     )
+
+    @field_validator('expiry_date')
+    @classmethod
+    def symbols_included_in_expiry_date(cls, date: str):
+        for i, sym in enumerate(date):
+            if not sym.isdigit():
+                raise ValueError(f"В дате окончания срока не могут быть символы. Позиция с 23 по 28. Позиция{i+23}")
+        return date
 
     expiry_date_check: int = Field(
         description='Контрольное число для даты окончания действия документа',
         examples=['0']
     )
 
-    personal_code: int | None = Field(
+    personal_code: str | None = Field(
         description='Персональный код, может быть пустым',
         examples=['', '1120322770122']
     )
+
+    @field_validator('personal_code')
+    @classmethod
+    def symbols_included_in_personal_code(cls, date: str):
+        for sym in date:
+            if not sym.isdigit():
+                raise ValueError("В личном коде не могут быть символы. Позиция с 30 по 42")
 
     personal_code_check: int = Field(
         description='Контрольное число для персонального кода',
