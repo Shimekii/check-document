@@ -22,6 +22,8 @@ def compare_doc_number(mrz_doc, req_doc):
 # сравнение даты из запроса и mrz
 def compare_date(mrz_data, req_data):
     data = req_data.split('.')
+    if int(data[2]) < 1900:
+        return False
     date = data[2][2:4] + data[1] + data[0]
     return mrz_data == date
 
