@@ -1,0 +1,17 @@
+services:
+  project:
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - redis
+
+  tests:
+    build:
+      context: .
+      dockerfile: src/tests/Dockerfile
+
+  redis:
+    image: redis:8.4.0
+    ports:
+      - "6379"
