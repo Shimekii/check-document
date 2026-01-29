@@ -12,7 +12,7 @@ router = APIRouter(
     status_code=status.HTTP_200_OK,
     summary='Проверить документ',
     description='Проверяет корректность считанных данных')
-def check_document(data: UserRequest = Body(...)) -> CheckResponse:
+def check_document(data: UserRequest) -> CheckResponse:
     mrz_metadata = parse(data)
     doc = build_document(mrz_metadata)
     is_valid = (
