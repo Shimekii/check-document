@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Response, status
+from fastapi import APIRouter, status
+from fastapi.responses import JSONResponse
 
 
 router = APIRouter(
@@ -7,8 +8,8 @@ router = APIRouter(
 )
 
 @router.get("/live")
-async def liveness_probe() -> Response:
+async def liveness_probe() -> JSONResponse:
     """
     Простая проверка на то, что приложение запущено и работает.
     """
-    return Response(status_code=status.HTTP_200_OK)
+    return JSONResponse(status_code=status.HTTP_200_OK, content={'status': 'ok'})
