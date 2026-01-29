@@ -57,7 +57,7 @@ class Document(BaseModel):
     def symbols_included_in_doc_number(cls, number: str) -> str:
         for i, num in enumerate(number):
             if not num.isdigit():
-                raise ValueError(f'В номере документа не может быть букв. Позиции с 1 по 10. Позиция: {i+1}')
+                raise ValueError(f'В номере документа должны быть только цифры. Позиции с 1 по 10. Позиция: {i+1}')
         return number
 
     doc_number_check: int = Field(
@@ -80,7 +80,7 @@ class Document(BaseModel):
     def symbols_included_in_birth_date(cls, date: str):
         for i, sym in enumerate(date):
             if not sym.isdigit():
-                raise ValueError(f"В дате рождения не могут быть символы. Позиция с 15 по 20. Позиция: {i+15}")
+                raise ValueError(f"В дате рождения должны быть только цифры. Позиция с 15 по 20. Позиция с ошибкой: {i+15}")
         return date
 
     birth_date_check: int = Field(
@@ -104,7 +104,7 @@ class Document(BaseModel):
     def symbols_included_in_expiry_date(cls, date: str):
         for i, sym in enumerate(date):
             if not sym.isdigit():
-                raise ValueError(f"В дате окончания срока не могут быть символы. Позиция с 23 по 28. Позиция{i+23}")
+                raise ValueError(f"В дате окончания срока должны быть только цифры. Позиция с 23 по 28. Позиция c ошибкой: {i+23}")
         return date
 
     expiry_date_check: int = Field(
@@ -120,9 +120,9 @@ class Document(BaseModel):
     @field_validator('personal_code')
     @classmethod
     def symbols_included_in_personal_code(cls, date: str):
-        for sym in date:
+        for i, sym in enumerate(date):
             if not sym.isdigit():
-                raise ValueError("В личном коде не могут быть символы. Позиция с 30 по 42")
+                raise ValueError(f"В личном коде должны быть только цифры. Позиция с 30 по 42. Позиция с ошибкой: {i+30}")
 
     personal_code_check: int = Field(
         description='Контрольное число для персонального кода',
