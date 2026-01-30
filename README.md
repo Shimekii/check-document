@@ -13,7 +13,7 @@ docker build -f src/tests/Dockerfile -t tests .
 docker run tests
 ```
 
-Запуск проекта вместе с Redis
+Запуск проекта целиком
 ```bash
-docker compose up
+docker compose up --build
 ```
