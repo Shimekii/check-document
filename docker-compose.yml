@@ -6,11 +6,6 @@ services:
     depends_on:
       - redis
 
-  tests:
-    build:
-      context: .
-      dockerfile: src/tests/Dockerfile
-
   redis:
     image: redis:8.4.0
     ports:
