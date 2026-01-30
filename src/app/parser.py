@@ -1,8 +1,10 @@
 import json
+import hashlib
 from fastapi import HTTPException
 from app.schemas.doc import Document, UserRequest
 from pydantic import ValidationError
 
+# считает контрольную сумму
 def mrz_checksum(data):
     weights = [7, 3, 1]
     total = 0
@@ -27,6 +29,7 @@ def compare_date(mrz_data, req_data):
     date = data[2][2:4] + data[1] + data[0]
     return mrz_data == date
 
+# парсит МЧЗ-строку из пользовательского запроса
 def parse(request: UserRequest):
     try:
         line1, line2 = request.mrz.splitlines()
@@ -60,6 +63,7 @@ def parse(request: UserRequest):
         "end_check": line2[43]
     }
 
+# собирает документ и обрабатывает исключения
 def build_document(data: dict) -> Document:
     try:
         return Document(**data)
@@ -74,3 +78,9 @@ def build_document(data: dict) -> Document:
                 for err in e.errors()
             ]
         )
+
+# генерирует ключ на основе пользовательского запроса
+def gen_redis_key(req: UserRequest) -> str:
+    data = req.model_dump_json()
+    raw = json.dumps(data, sort_keys=True, ensure_ascii=False)
+    return 'user_request:' + hashlib.sha256(raw.encode()).hexdigest()
