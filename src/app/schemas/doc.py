@@ -119,10 +119,13 @@ class Document(BaseModel):
 
     @field_validator('personal_code')
     @classmethod
-    def symbols_included_in_personal_code(cls, date: str):
+    def symbols_included_in_personal_code(cls, date: str | None):
+        if date is None:
+            return date
         for i, sym in enumerate(date):
             if not sym.isdigit():
                 raise ValueError(f"В личном коде должны быть только цифры. Позиция с 30 по 42. Позиция с ошибкой: {i+30}")
+        return date
 
     personal_code_check: int = Field(
         description='Контрольное число для персонального кода',
