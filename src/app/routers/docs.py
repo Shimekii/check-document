@@ -1,9 +1,8 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter, status, Depends
 from app.schemas.doc import UserRequest, CheckResponse, Document
 from app.parser import compare_doc_number, compare_date, parse, build_document, gen_redis_key
+from app.dependencies.redis import get_redis
 
-from redis.asyncio import Redis
-redis_client = Redis(host='redis')
 
 router = APIRouter(
     prefix='/doc',
@@ -15,14 +14,14 @@ router = APIRouter(
     status_code=status.HTTP_200_OK,
     summary='Проверить документ',
     description='Проверяет корректность считанных данных')
-async def check_document(data: UserRequest) -> CheckResponse:
+async def check_document(data: UserRequest, redis_client = Depends(get_redis)) -> CheckResponse:
     # получаем ключ сформированный из запроса
     key = gen_redis_key(data)
     value = await redis_client.get(key)
     if not value:
         mrz_metadata = parse(data)
         doc = build_document(mrz_metadata)
-        redis_client.set(key, doc.model_dump_json())
+        await redis_client.set(key, doc.model_dump_json())
     else:
         doc = Document.model_validate_json(value)
     is_valid = (
