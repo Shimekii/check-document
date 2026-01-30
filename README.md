@@ -13,12 +13,7 @@ docker build -f src/tests/Dockerfile -t tests .
 docker run tests
 ```
 
-Запуск проекта
-```bash
-docker run -p 8080:8080 project
-```
-
-Запуск всей инфраструктуры из docker-compose
+Запуск проекта вместе с Redis
 ```bash
 docker compose up
 ```
