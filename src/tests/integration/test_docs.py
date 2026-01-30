@@ -17,7 +17,7 @@ async def test_docs_check_correct_data(async_client):
     responce = await async_client.post('/doc/check', json=example_data)
 
     assert responce.status_code == 200
-    assert responce.json() == {'valid': True}
+    assert responce.json() == {'result': True}
 
 # проверка с ошибкой в номере докумета в строке МЧЗ
 async def test_docs_check_incorrect_doc_number(async_client):
