@@ -19,7 +19,7 @@ class UserRequest(BaseModel):
     )
 
 class CheckResponse(BaseModel):
-    valid: bool
+    result: bool
 
 class Document(BaseModel):
     doc_type: str = Field(
