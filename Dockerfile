@@ -6,7 +6,7 @@ WORKDIR /app
 
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 
-COPY pyproject.toml uv.lock ./
+COPY pyproject.toml uv.lock pytest.ini ./
 
 ENV UV_NO_DEV=1
 
