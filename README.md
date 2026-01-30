@@ -10,7 +10,7 @@ docker build -f src/tests/Dockerfile -t tests .
 
 Запуск тестов
 ```bash
-docker run tests
+docker run --rm tests
 ```
 
 Запуск проекта целиком
